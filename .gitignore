@@ -22,7 +22,7 @@ ExportedObj/
 *.pidb
 *.booproj
 *.svd
-
+/Murphy/Temp/*
 /Murphy/App/* 
 
 # Unity3D generated meta files
