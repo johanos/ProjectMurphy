@@ -10,6 +10,9 @@ public class MicrophoneManager : MonoBehaviour {
     [Tooltip("A text area for the recognizer to display the recognized strings.")]
     public Text DictationDisplay;
 
+    public GameObject Canvas;
+    private TextBehavior behave;
+
     private DictationRecognizer dictationRecognizer;
 
     // Use this string to cache the text currently displayed in the text box.
@@ -25,6 +28,7 @@ public class MicrophoneManager : MonoBehaviour {
 
     void Awake() {
         /* TODO: DEVELOPER CODING EXERCISE 3.a */
+   
 
         // 3.a: Create a new DictationRecognizer and assign it to dictationRecognizer variable.
         dictationRecognizer = new DictationRecognizer();
@@ -54,6 +58,11 @@ public class MicrophoneManager : MonoBehaviour {
 
         // Use this to reset the UI once the Microphone is done recording after it was started.
         hasRecordingStarted = false;
+    }
+
+    void Start()
+    {
+        behave = Canvas.GetComponent<TextBehavior>();
     }
 
     void Update() {
@@ -125,10 +134,13 @@ public class MicrophoneManager : MonoBehaviour {
     private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence) {
         // 3.a: Append textSoFar with latest text
         textSoFar.Append(text + ". ");
-
        
+        behave.SetText(text);
+
 
         Debug.Log(textSoFar);
+
+        DictationDisplay.text = textSoFar.ToString();
     }
 
     /// <summary>
