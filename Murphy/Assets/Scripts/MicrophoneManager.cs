@@ -8,8 +8,6 @@ using UnityEngine.Windows.Speech;
 
 public class MicrophoneManager : MonoBehaviour {
     [Tooltip("A text area for the recognizer to display the recognized strings.")]
-    public Text DictationDisplay;
-
     public GameObject Canvas;
     private TextBehavior behave;
 
@@ -76,6 +74,11 @@ public class MicrophoneManager : MonoBehaviour {
             // Look at the StopRecording function.
             SendMessage("RecordStop");
         }
+        //If there's any text, display it.
+        if(textSoFar.Length > 0)
+        {
+            Canvas.GetComponent<Renderer>().enabled = true;
+        }
     }
 
     /// <summary>
@@ -85,6 +88,8 @@ public class MicrophoneManager : MonoBehaviour {
     public AudioClip StartRecording() {
         // 3.a Shutdown the PhraseRecognitionSystem. This controls the KeywordRecognizers
         PhraseRecognitionSystem.Shutdown();
+
+        this.GetComponent<ParticleSystem>().Play();
 
         Debug.Log("RECORDING START");
         // 3.a: Start dictationRecognizer
@@ -112,7 +117,7 @@ public class MicrophoneManager : MonoBehaviour {
             textSoFar.Length = 0;
         }
         textSoFar.Length = 0;
-
+        this.GetComponent<ParticleSystem>().Play();
         Microphone.End(deviceName);
     }
 
@@ -124,6 +129,8 @@ public class MicrophoneManager : MonoBehaviour {
         // 3.a: Set DictationDisplay text to be textSoFar and new hypothesized text
         // We don't want to append to textSoFar yet, because the hypothesis may have changed on the next event
         Debug.Log(textSoFar.ToString() + " " + text + "...");
+
+        behave.SetText(text);
     }
 
     /// <summary>
@@ -135,12 +142,11 @@ public class MicrophoneManager : MonoBehaviour {
         // 3.a: Append textSoFar with latest text
         textSoFar.Append(text + ". ");
        
-        behave.SetText(text);
-
-
+        //behave.SetText(text);
+        
         Debug.Log(textSoFar);
 
-        DictationDisplay.text = textSoFar.ToString();
+        StartCoroutine(behave.emptyQueue());
     }
 
     /// <summary>
@@ -167,7 +173,6 @@ public class MicrophoneManager : MonoBehaviour {
     /// <param name="hresult">The int representation of the hresult.</param>
     private void DictationRecognizer_DictationError(string error, int hresult) {
         // 3.a: Set DictationDisplay text to be the error string
-        DictationDisplay.text = error + "\nHRESULT: " + hresult;
     }
 
     private IEnumerator RestartSpeechSystem(KeywordManager keywordToStart) {

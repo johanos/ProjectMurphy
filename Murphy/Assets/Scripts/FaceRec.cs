@@ -10,11 +10,24 @@ public class FaceRec : MonoBehaviour {
     Quaternion cameraRotation;
     Vector3 capturePosition;
     Vector3 captureForward;
-    public GameObject textPrefab;
-    public GameObject textObject = null;
+    bool noFaces = true;
+
+    public GameObject textObject;
+    public GameObject dictationManager;
+
+    Vector3 destPosition;
+    float startTime;
+    float pathLength;
+
+
+
     // Use this for initialization
     void Start() {
         Debug.Log("Merp I started");
+        destPosition = this.transform.position + this.transform.forward * 10;
+        startTime = Time.time;
+        pathLength = Vector3.Distance(this.transform.position, destPosition);
+
         Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
         cameraParameters = new CameraParameters();
         cameraParameters.hologramOpacity = 0.0f;
@@ -24,8 +37,21 @@ public class FaceRec : MonoBehaviour {
         Debug.Log("Resolution = (" + cameraResolution.width.ToString() + ", " + cameraResolution.height + ")");
         StartCoroutine(captureLoop());
     }
+
+    void Update()
+    {
+        if (noFaces && !textObject.GetComponent<TextBehavior>().isEmpty())
+        {
+            destPosition = this.transform.position + this.transform.forward * 10;
+            pathLength = Vector3.Distance(textObject.transform.position,destPosition);
+        }
+
+        textObject.transform.position = Vector3.Lerp(this.transform.position, destPosition, ((Time.time-startTime)/pathLength));
+        textObject.transform.rotation.SetLookRotation(Camera.main.transform.position);
+    }
     IEnumerator captureLoop() {
         while ( true ) {
+            startTime = Time.time;
             // Create a PhotoCapture object
             PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject) {
                 photoCaptureObject = captureObject;
@@ -76,22 +102,38 @@ public class FaceRec : MonoBehaviour {
         //if it's empty, sucks
         if ( j.list.Count == 0 ) {
             Debug.Log("No faces found :<");
-            textObject = null;
+            noFaces = true;
+
+            //if no faces and no text, turn off chat bubble.
+            if (textObject.GetComponent<TextBehavior>().isEmpty())
+            {
+                textObject.GetComponent<Renderer>().enabled = false;
+            }
+            //If there's still text, move the chat bubble to a set distance in front of you. ( handled in update() )
+     
         } else {
             //Process the faces, spawn text.
             spawnAtFace(j, projection, camToWorld);
+            noFaces = false;
         }
     }
+
     void spawnAtFace(JSONObject faces, Matrix4x4 projection, Matrix4x4 camToWorld) {
         var result = faces.list.First();
-        if ( textObject == null ) {
-            textObject = (GameObject)Instantiate(textPrefab);
+
+        //if textObject is off, turn on.
+        if ( textObject.GetComponent<Renderer>().enabled == false) {
+            textObject.GetComponent<Renderer>().enabled = true;
         }
         var rect = result.GetField("faceRectangle");
         var top = rect.GetField("top").i;
         var left = rect.GetField("left").i;
         var width = rect.GetField("width").i;
         var height = rect.GetField("height").i;
+
+        float scale = (width + height)/7000f;
+        textObject.transform.localScale = new Vector3(scale, scale, scale);
+
         //Calculate offset and transform it back to 3d space
 
         Vector3 infoOffsetPoint = new Vector3((left) * (Screen.width / cameraParameters.cameraResolutionWidth), (top) * (Screen.width / cameraParameters.cameraResolutionWidth), 20);
