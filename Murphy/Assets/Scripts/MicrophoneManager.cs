@@ -33,11 +33,6 @@ public class MicrophoneManager : MonoBehaviour {
 
     void Awake() {
         /* TODO: DEVELOPER CODING EXERCISE 3.a */
-        instanceMat = new Material(MicrophoneMaterial);
-        Debug.Log(instanceMat.color.ToString());
-        instanceMat.color = Color.green;
-        this.GetComponent<Renderer>().material = instanceMat;
-        Debug.Log(this.gameObject.GetComponent<Renderer>().material);
 
         // 3.a: Create a new DictationRecognizer and assign it to dictationRecognizer variable.
         dictationRecognizer = new DictationRecognizer();

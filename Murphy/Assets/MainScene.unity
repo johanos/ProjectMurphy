@@ -2269,6 +2269,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Canvas: {fileID: 415989368}
+  MicrophoneMaterial: {fileID: 2100000, guid: 155444637ae7f1f4fb142d4637861cd0, type: 2}
 --- !u!114 &1448479734
 MonoBehaviour:
   m_ObjectHideFlags: 0
