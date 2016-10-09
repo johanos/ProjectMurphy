@@ -16,17 +16,12 @@ public class FaceRec : MonoBehaviour {
     public GameObject dictationManager;
 
     Vector3 destPosition;
-    float startTime;
-    float pathLength;
-
-
 
     // Use this for initialization
-    void Start() {
+    void Start()
+    {
         Debug.Log("Merp I started");
-        destPosition = this.transform.position + this.transform.forward * 10;
-        startTime = Time.time;
-        pathLength = Vector3.Distance(this.transform.position, destPosition);
+        destPosition = this.transform.position + this.transform.forward * 20;
 
         Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
         cameraParameters = new CameraParameters();
@@ -35,27 +30,29 @@ public class FaceRec : MonoBehaviour {
         cameraParameters.cameraResolutionHeight = cameraResolution.height;
         cameraParameters.pixelFormat = CapturePixelFormat.JPEG;
         Debug.Log("Resolution = (" + cameraResolution.width.ToString() + ", " + cameraResolution.height + ")");
-        StartCoroutine(captureLoop());
+
+        // Create a PhotoCapture object
+        PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject)
+        {
+            photoCaptureObject = captureObject;
+            StartCoroutine(captureLoop());
+        });
     }
 
     void Update()
     {
-        if (noFaces && !textObject.GetComponent<TextBehavior>().isEmpty())
+        if (noFaces)
         {
-            destPosition = this.transform.position + this.transform.forward * 10;
-            pathLength = Vector3.Distance(textObject.transform.position,destPosition);
+            destPosition = Camera.main.transform.position + Camera.main.transform.forward * 20;
         }
+        Debug.Log("Dest Position" + destPosition);
 
-        textObject.transform.position = Vector3.Lerp(this.transform.position, destPosition, ((Time.time-startTime)/pathLength));
+        textObject.transform.position = destPosition;
         textObject.transform.rotation.SetLookRotation(Camera.main.transform.position);
     }
     IEnumerator captureLoop() {
         while ( true ) {
-            startTime = Time.time;
-            // Create a PhotoCapture object
-            PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject) {
-                photoCaptureObject = captureObject;
-            });
+
             // Activate the camera
             photoCaptureObject.StartPhotoModeAsync(cameraParameters, false, delegate (PhotoCapture.PhotoCaptureResult result) {
                 // Take a picture
@@ -107,7 +104,7 @@ public class FaceRec : MonoBehaviour {
             //if no faces and no text, turn off chat bubble.
             if (textObject.GetComponent<TextBehavior>().isEmpty())
             {
-                textObject.GetComponent<Renderer>().enabled = false;
+                textObject.GetComponentInChildren<CanvasRenderer>().SetAlpha(0);
             }
             //If there's still text, move the chat bubble to a set distance in front of you. ( handled in update() )
      
@@ -122,8 +119,8 @@ public class FaceRec : MonoBehaviour {
         var result = faces.list.First();
 
         //if textObject is off, turn on.
-        if ( textObject.GetComponent<Renderer>().enabled == false) {
-            textObject.GetComponent<Renderer>().enabled = true;
+        if ( textObject.GetComponentInChildren<CanvasRenderer>().GetAlpha() == 0) {
+            textObject.GetComponentInChildren<CanvasRenderer>().SetAlpha(1);
         }
         var rect = result.GetField("faceRectangle");
         var top = rect.GetField("top").i;
@@ -151,7 +148,7 @@ public class FaceRec : MonoBehaviour {
     }
     void OnStoppedPhotoMode(PhotoCapture.PhotoCaptureResult result) {
         // Shutdown our photo capture resource
-        photoCaptureObject.Dispose();
-        photoCaptureObject = null;
+        //photoCaptureObject.Dispose();
+
     }
 }

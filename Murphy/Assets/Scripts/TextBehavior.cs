@@ -7,80 +7,45 @@ using System.Collections.Generic;
 public class TextBehavior : MonoBehaviour
 {
     public Text displayText;
+    public Text displayText2;
 
-    string sentence;
-
-    public int lineCapacity = 10;
-    private int lineCount;
-    Queue<string> TextQ;
-    private int count = 0;
+    float sinceLast;
 
     void Start()
     {
-        // Initialize Queue, probably ""
-        TextQ = new Queue<string>(2*lineCapacity);
-        displayText.text = "";
-        lineCount = 0;
+        displayText.text = " ";
     }
 
     //Text maker
     public void SetText(string textIn)
     {
-        //Before anything, make sure queue has space
-        if(TextQ.Count == 2*lineCapacity)
-        {
-            TextQ.Dequeue();
-        }
-
-        // Input arg will be real-time speech-to-text string 
-        TextQ.Enqueue(textIn);
-
-        foreach (string word in TextQ)
-        {
-            lineCount++;
-            sentence += " " + word;
-            if(lineCount == lineCapacity)
-            {
-                sentence += '\n';
-                lineCount = 0;
-            }
-        }
-        lineCount = 0;
-        displayText.text = sentence;
-        sentence = " ";
-    }
-
-    //Test input
-    void Update()
-    {
-        if (count % 20 == 0)
-        {
-
-            SetText("word" + count);
-        }
-
-        count++;
+        displayText.text = textIn;
+        sinceLast = Time.time;
     }
 
     //When speech is finished, empty the queue.
-    public IEnumerator emptyQueue()
+    public IEnumerator shiftSentence()
     {
-        while(TextQ.Count > 0)
+        displayText2.text = displayText.text;
+
+        yield return new WaitForSeconds(2);
+        displayText2.text = " ";
+        yield return new WaitForSeconds(2);
+        if(Time.time - sinceLast >= 2)
         {
-            TextQ.Dequeue();
-            yield return new WaitForSeconds(2.25f);
+            displayText.text = " ";
         }
     }
 
     public bool isEmpty()
     {
-        if(TextQ.Count != 0)
+        if (displayText2.text == " " && displayText.text == " ")
         {
-            return false;
+            return true;
         }
         else
         {
-            return true;
+            return false;
         }
     }
 }

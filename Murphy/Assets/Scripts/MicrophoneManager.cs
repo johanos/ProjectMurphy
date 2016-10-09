@@ -77,7 +77,7 @@ public class MicrophoneManager : MonoBehaviour {
         //If there's any text, display it.
         if(textSoFar.Length > 0)
         {
-            Canvas.GetComponent<Renderer>().enabled = true;
+            Canvas.GetComponentInChildren<CanvasRenderer>().SetAlpha(1);
         }
     }
 
@@ -141,12 +141,10 @@ public class MicrophoneManager : MonoBehaviour {
     private void DictationRecognizer_DictationResult(string text, ConfidenceLevel confidence) {
         // 3.a: Append textSoFar with latest text
         textSoFar.Append(text + ". ");
-       
-        //behave.SetText(text);
         
         Debug.Log(textSoFar);
 
-        StartCoroutine(behave.emptyQueue());
+        StartCoroutine(behave.shiftSentence());
     }
 
     /// <summary>
