@@ -100,9 +100,9 @@ public class MicrophoneManager : MonoBehaviour {
         if ( dictationRecognizer.Status == SpeechSystemStatus.Running ) {
             Debug.Log("I'm here in stop");
             dictationRecognizer.Stop();
-            textSoFar.Clear();
+            textSoFar.Length = 0;
         }
-        textSoFar.Clear();
+        textSoFar.Length = 0;
 
         Microphone.End(deviceName);
     }
