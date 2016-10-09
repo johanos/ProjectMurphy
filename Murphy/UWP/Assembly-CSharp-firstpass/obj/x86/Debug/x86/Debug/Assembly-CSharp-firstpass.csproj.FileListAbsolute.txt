@@ -1,7 +1,6 @@
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\bin\x86\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\bin\x86\Debug\Assembly-CSharp-firstpass.pdb
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\bin\x86\Debug\Assembly-CSharp-firstpass.pri
-C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\Assembly-CSharp-firstpass.csprojResolveAssemblyReference.cache
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\Assembly-CSharp-firstpass.pdb
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\priconfig.xml
@@ -15,3 +14,4 @@ C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\qualifiers.txt
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\qualifiers.txt.intermediate
 C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\MultipleQualifiersPerDimensionFound.txt
+C:\Users\Johanos\Documents\Development\ProjectMurphy\Murphy\UWP\Assembly-CSharp-firstpass\obj\x86\Debug\x86\Debug\Assembly-CSharp-firstpass.csprojResolveAssemblyReference.cache
