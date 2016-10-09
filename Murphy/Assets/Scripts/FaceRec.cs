@@ -20,7 +20,7 @@ public class FaceRec : MonoBehaviour {
     // Use this for initialization
     void Start()
     {
-        Debug.Log("Merp I started");
+        //Debug./*Log*/("Merp I started");
         destPosition = this.transform.position + this.transform.forward * 20;
 
         Resolution cameraResolution = PhotoCapture.SupportedResolutions.OrderByDescending((res) => res.width * res.height).First();
@@ -29,7 +29,7 @@ public class FaceRec : MonoBehaviour {
         cameraParameters.cameraResolutionWidth = cameraResolution.width;
         cameraParameters.cameraResolutionHeight = cameraResolution.height;
         cameraParameters.pixelFormat = CapturePixelFormat.JPEG;
-        Debug.Log("Resolution = (" + cameraResolution.width.ToString() + ", " + cameraResolution.height + ")");
+        //Debug.Log("Resolution = (" + cameraResolution.width.ToString() + ", " + cameraResolution.height + ")");
 
         // Create a PhotoCapture object
         PhotoCapture.CreateAsync(false, delegate (PhotoCapture captureObject)
@@ -45,7 +45,7 @@ public class FaceRec : MonoBehaviour {
         {
             destPosition = Camera.main.transform.position + Camera.main.transform.forward * 20;
         }
-        Debug.Log("Dest Position" + destPosition);
+        //Debug.Log("Dest Position" + destPosition);
 
         textObject.transform.position = destPosition;
         textObject.transform.rotation.SetLookRotation(Camera.main.transform.position);
@@ -61,8 +61,8 @@ public class FaceRec : MonoBehaviour {
                 captureForward = Camera.main.transform.forward;
             });
             //FaceAPI trial allows only 20 calls per minute
-            //60/3.1 = 19.35 calls per minute
-            yield return new WaitForSeconds(3.2f);
+            //60/3.5 = 17 calls per minute
+            yield return new WaitForSeconds(3.5f);
         }
     }
     void OnCapturedPhotoToMemory(PhotoCapture.PhotoCaptureResult result, PhotoCaptureFrame photoCaptureFrame) {
@@ -87,15 +87,15 @@ public class FaceRec : MonoBehaviour {
             { "Ocp-Apim-Subscription-Key", "8237559739874b4480d0003e1bd251b8" },
             { "Content-Type", "application/octet-stream" }
         };
-        Debug.Log(string.Format("cam {0}", cameraPosition));
-        Debug.Log(string.Format("proj {0}", projection));
-        Debug.Log(string.Format("cam2world {0}", camToWorld));
-        Debug.Log("Image Size: " + imgData.Length + " bytes");
+        //Debug.Log(string.Format("cam {0}", cameraPosition));
+        //Debug.Log(string.Format("proj {0}", projection));
+        //Debug.Log(string.Format("cam2world {0}", camToWorld));
+        //Debug.Log("Image Size: " + imgData.Length + " bytes");
         WWW www = new WWW(url, imgData, headers);
         yield return www;
         string responseString = www.text;
         JSONObject j = new JSONObject(responseString);
-        Debug.Log(j);
+        //Debug.Log(j);
         //if it's empty, sucks
         if ( j.list.Count == 0 ) {
             Debug.Log("No faces found :<");
@@ -128,9 +128,6 @@ public class FaceRec : MonoBehaviour {
         var width = rect.GetField("width").i;
         var height = rect.GetField("height").i;
 
-        float scale = (width + height)/7000f;
-        textObject.transform.localScale = new Vector3(scale, scale, scale);
-
         //Calculate offset and transform it back to 3d space
 
         Vector3 infoOffsetPoint = new Vector3((left) * (Screen.width / cameraParameters.cameraResolutionWidth), (top) * (Screen.width / cameraParameters.cameraResolutionWidth), 20);
@@ -141,6 +138,11 @@ public class FaceRec : MonoBehaviour {
         Debug.Log(string.Format("offset {0}", offset));
         //Set position of chatbox and tag it
         Vector3 position = cameraPosition + offset;
+
+        if(Vector3.Distance(position, cameraPosition) <= 15)
+        {
+            position.z = 15;
+        }
         Debug.Log("Chatbox position: " + position);
         Debug.Log("User position in space: " + Camera.main.transform.position);
         textObject.transform.position = position;

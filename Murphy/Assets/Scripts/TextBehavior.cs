@@ -9,17 +9,39 @@ public class TextBehavior : MonoBehaviour
     public Text displayText;
     public Text displayText2;
 
+    string[] wordsIn;
+    string sentence;
+
     float sinceLast;
 
     void Start()
     {
         displayText.text = " ";
+        displayText2.text = " ";
     }
 
     //Text maker
     public void SetText(string textIn)
     {
-        displayText.text = textIn;
+        wordsIn = textIn.Split(' ');
+
+        sentence = " ";
+
+        if(wordsIn.Length > 8)
+        {
+            for(int i = wordsIn.Length - 8; i < wordsIn.Length; i++)
+            {
+                sentence += wordsIn[i] + " ";
+            }
+        }
+        else
+        {
+            foreach(string word in wordsIn)
+            {
+                sentence += word + " ";
+            }
+        }
+        displayText.text = sentence;
         sinceLast = Time.time;
     }
 
@@ -27,6 +49,7 @@ public class TextBehavior : MonoBehaviour
     public IEnumerator shiftSentence()
     {
         displayText2.text = displayText.text;
+        displayText.text = " ";
 
         yield return new WaitForSeconds(2);
         displayText2.text = " ";

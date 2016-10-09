@@ -9,6 +9,11 @@ using UnityEngine.Windows.Speech;
 public class MicrophoneManager : MonoBehaviour {
     [Tooltip("A text area for the recognizer to display the recognized strings.")]
     public GameObject Canvas;
+
+    [Tooltip("A color to change to")]
+    public Material MicrophoneMaterial;
+    private Material instanceMat;
+
     private TextBehavior behave;
 
     private DictationRecognizer dictationRecognizer;
@@ -24,9 +29,15 @@ public class MicrophoneManager : MonoBehaviour {
     // Use this to reset the UI once the Microphone is done recording after it was started.
     private bool hasRecordingStarted;
 
+    bool isRec = false;
+
     void Awake() {
         /* TODO: DEVELOPER CODING EXERCISE 3.a */
-   
+        instanceMat = new Material(MicrophoneMaterial);
+        Debug.Log(instanceMat.color.ToString());
+        instanceMat.color = Color.green;
+        this.GetComponent<Renderer>().material = instanceMat;
+        Debug.Log(this.gameObject.GetComponent<Renderer>().material);
 
         // 3.a: Create a new DictationRecognizer and assign it to dictationRecognizer variable.
         dictationRecognizer = new DictationRecognizer();
@@ -64,6 +75,21 @@ public class MicrophoneManager : MonoBehaviour {
     }
 
     void Update() {
+
+        //If there's any text, display it.
+        if (textSoFar.Length > 0)
+        {
+            Canvas.GetComponentInChildren<CanvasRenderer>().SetAlpha(1);
+        }
+        if (isRec)
+        {
+            this.gameObject.GetComponent<Renderer>().material.color = Color.green;
+        }
+        else
+        {
+            this.gameObject.GetComponent<Renderer>().material.color = Color.white;
+        }
+
         // 3.a: Add condition to check if dictationRecognizer.Status is Running
         if ( hasRecordingStarted && !Microphone.IsRecording(deviceName) && dictationRecognizer.Status == SpeechSystemStatus.Running ) {
             // Reset the flag now that we're cleaning up the UI.
@@ -73,11 +99,6 @@ public class MicrophoneManager : MonoBehaviour {
             // If the microphone stops as a result of timing out, make sure to manually stop the dictation recognizer.
             // Look at the StopRecording function.
             SendMessage("RecordStop");
-        }
-        //If there's any text, display it.
-        if(textSoFar.Length > 0)
-        {
-            Canvas.GetComponentInChildren<CanvasRenderer>().SetAlpha(1);
         }
     }
 
@@ -100,6 +121,7 @@ public class MicrophoneManager : MonoBehaviour {
 
         // Set the flag that we've started recording.
         hasRecordingStarted = true;
+        isRec = true;
 
         // Start recording from the microphone for 10 seconds.
         return Microphone.Start(deviceName, false, messageLength, samplingRate);
@@ -119,6 +141,7 @@ public class MicrophoneManager : MonoBehaviour {
         textSoFar.Length = 0;
         this.GetComponent<ParticleSystem>().Play();
         Microphone.End(deviceName);
+        isRec = false;
     }
 
     /// <summary>
@@ -156,10 +179,12 @@ public class MicrophoneManager : MonoBehaviour {
         // If Timeout occurs, the user has been silent for too long.
         // With dictation, the default timeout after a recognition is 20 seconds.
         // The default timeout with initial silence is 5 seconds.
+
+        isRec = false;
         
         if ( cause == DictationCompletionCause.TimeoutExceeded ) {
             Microphone.End(deviceName);
-            
+
             SendMessage("ResetAfterTimeout");
         }
     }
